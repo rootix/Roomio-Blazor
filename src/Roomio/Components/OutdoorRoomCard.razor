@@ -1,0 +1,39 @@
+﻿@using Roomio.Data
+
+<div class="p-4 rounded shadow dark:bg-gray-900 min-w-min col-span-1 text-gray-50 sm:col-span-2" style="background-color: #1E87F0">
+    <div class="flex">
+        <h2 class="flex-grow">@Data.RoomName</h2>
+        <div class="flex flex-none items-center">
+            <TemperatureIcon />
+            <span class="text-xl font-semibold	">@Data.Temperature &#8451;</span>
+        </div>
+    </div>
+    <div class="flex mt-8">
+        <div class="flex flex-grow">
+            <HumidityIcon />
+            <span class="text-sm">
+                @Data.Humidity %
+            </span>
+        </div>
+
+        <div class="flex">
+            <div class="flex">
+                <ArrowDownIcon />
+                <span class="text-sm">
+                    @Data.MinTemperature &#8451;
+                </span>
+            </div>
+            <div class="flex">
+                <ArrowUpIcon />
+                <span class="text-sm">
+                    @Data.MaxTemperature &#8451;
+                </span>
+            </div>
+        </div>
+    </div>
+</div>
+
+@code {
+    [Parameter]
+    public RoomData Data { get; set; }
+}

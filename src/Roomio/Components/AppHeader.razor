@@ -1,0 +1,35 @@
+﻿@using Roomio.Data.State
+@using Humanizer
+@using System.Timers
+@inherits Rudder.StateComponent<RoomioAppState, EnvironmentalDataState>
+
+@functions
+{
+    Task LoadEnvironmentalData() => Put(new Actions.LoadEnvironmentalData.Invoke());
+}
+<div class="">
+    <button class="icon-button" title="Aktualisieren" @onclick="@LoadEnvironmentalData">
+        <RefreshIcon />
+    </button>
+
+    @if (State.IsFetching)
+    {
+        <span>Aktualisieren ...</span>
+    }
+    else if (State.LastFetched.HasValue)
+    {
+        @State.LastFetched.Value.Humanize(utcDate: true)
+    }
+</div>
+
+@code
+{
+    protected override async Task OnInitializedAsync()
+    {
+        base.OnInitialized();
+        await LoadEnvironmentalData();
+
+        var timer = new Timer(5000);
+        timer.Elapsed += (Object source, ElapsedEventArgs ElapsedEventArgs) => ;
+    }
+}

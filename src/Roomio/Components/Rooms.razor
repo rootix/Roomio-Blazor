@@ -1,0 +1,23 @@
+﻿@using Roomio.Data
+@inherits Rudder.StateComponent<Roomio.Data.State.RoomioAppState, Roomio.Data.State.EnvironmentalDataState>
+
+@if (State.RoomData.IsEmpty)
+{
+    <span>Keine Daten</span>
+}
+else
+{
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        @foreach (RoomData roomData in State.RoomData)
+        {
+            @if (roomData.Type == RoomType.Indoor)
+            {
+                <IndoorRoomCard Data="roomData" />
+            }
+            else if (roomData.Type == RoomType.Outdoor)
+            {
+                <OutdoorRoomCard Data="roomData" />
+            }
+        }
+    </div>
+}

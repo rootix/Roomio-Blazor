@@ -1,15 +1,16 @@
+using System;
+
 using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+
+using Roomio.Configuration;
 using Roomio.Data;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+using Roomio.Data.State;
+
+using Rudder;
 
 namespace Roomio
 {
@@ -26,9 +27,21 @@ namespace Roomio
         // For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
         public void ConfigureServices(IServiceCollection services)
         {
+            services.Configure<AppConfiguration>(Configuration);
+
             services.AddRazorPages();
             services.AddServerSideBlazor();
-            services.AddSingleton<WeatherForecastService>();
+            services.AddSingleton<InfluxDbClient>();
+            services.AddRudder<RoomioAppState>(options =>
+            {
+                options.AddStateInitializer<InitialState>();
+                options.AddStateFlows();
+                options.AddLogicFlows();
+
+                #if DEBUG
+                options.AddJsLogging();
+                #endif
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
