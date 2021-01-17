@@ -1,0 +1,66 @@
+﻿@using Roomio.Data
+@using Roomio.Data.State
+@using System.Threading
+@inherits Rudder.StateComponent<Roomio.Data.State.RoomioAppState, Roomio.Data.State.EnvironmentalDataState>
+
+<div class="flex justify-center mb-4 text-sm">
+    @if (State.IsFetching)
+    {
+        <text>Aktualisieren ...</text>
+    }
+    else if (State.LastFetched.HasValue)
+    {
+        <text>Letzte Aktualisierung: @State.LastFetched</text>
+    }
+</div>
+
+@if (!State.RoomData.IsEmpty)
+{
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        @foreach (RoomData roomData in State.RoomData)
+        {
+            @if (roomData.Type == RoomType.Indoor)
+            {
+                <IndoorRoomCard Data="roomData" />
+            }
+            else if (roomData.Type == RoomType.Outdoor)
+            {
+                <OutdoorRoomCard Data="roomData" />
+            }
+        }
+    </div>
+}
+
+@code
+{
+    private bool _disposedValue;
+    private Timer _timer;
+
+    protected override Task OnInitializedAsync()
+    {
+        var task = base.OnInitializedAsync();
+
+        _timer = new Timer((_) =>
+        {
+            InvokeAsync(async () =>
+            {
+                await Put(new Actions.LoadEnvironmentalData.Invoke());
+            });
+        }, new AutoResetEvent(false), 0, 300000);
+
+        return task;
+    }
+
+    protected void Dispose(bool disposing)
+    {
+        if (!_disposedValue)
+        {
+            if (disposing)
+            {
+                _timer.Dispose();
+            }
+
+            _disposedValue = true;
+        }
+    }
+}
